@@ -15,7 +15,9 @@
 }
 
 .sidebar__logo {
-    margin-top: auto;
+    width: 200px;
+    margin: 0 auto;
+    margin-bottom: 20px;
 }
 
 .sidebar__link {
@@ -61,7 +63,6 @@
 .sidebar__user {
     margin-bottom: 50px;
     text-align: center;
-    margin-top: 30px;
 }
 
 .sidebar__issues {
@@ -71,4 +72,14 @@
 .sidebar__issues p {
     font-size: 0.8rem;
     text-align: center;
+}
+
+.sidebar__bottom {
+    margin-top: auto;
+}
+
+@media screen and (max-height: 620px) {
+    .sidebar__logo {
+        display: none;
+    }
 }

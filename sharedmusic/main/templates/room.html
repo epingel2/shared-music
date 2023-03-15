@@ -23,40 +23,62 @@
         <button title="Copy link to clipboard" onclick="copyLinkToClipboard(this)" class="btn btn-image"><i class="fa-solid fa-copy"></i></button>
     </div>
     <div class="lobby">
-        <div class="chat">
+        <div class="chat block">
             <div id="room" room_code="{{ room.id }}"></div>
             <div id="host" host_username="{{ room.host.username }}"></div>
             <div id="user" username="{{ user.username }}"></div>
-            <h4>Chat:</h4>
+            <header class="block__header">
+                <ul class="tabs">
+                    <li class="active">Chat</li>
+                </ul>
+            </header>
             <div id="chat" class="chat__messages"></div>
-            <div class="chat__input">
+            <form onsubmit="event.preventDefault()" class="chat__input">
                 <input id="chat-field" type="text" placeholder="Enter message"/>
-                <button title="Send message to chat" class="btn btn-image" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-            <div id="muted-message" class="chat__muted-message hidden">You are muted</div>
+                <button title="Send message to chat" class="btn btn-image" onclick="chat.sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </form>
         </div>
-        <div class="playlist">
-            <h4>Playlist:</h4>
-            <div id="playlist" class="playlist__tracks"></div>
-            <div class="playlist__input">
-                <input id="url-field" type="text" placeholder="Enter youtube url"/>
-                <button title="Add track to playlist" class="btn btn-image" onclick="addTrack()"><i class="fa-solid fa-plus"></i></button>
+        <div class="main-block block">
+            <header class="block__header">
+                <ul class="tabs">
+                    <li class="active" onclick="changeMainBlock(this, '.playlist')">Playlist</li>
+                    <li onclick="changeMainBlock(this, '.search')">Search</li>
+                </ul>
+            </header>
+            <div class="playlist">
+                <div id="playlist" class="playlist__tracks"></div>
+                <form onsubmit="event.preventDefault()" class="playlist__input">
+                    <input id="url-field" type="text" placeholder="Enter youtube url"/>
+                    <button title="Add track to playlist" class="btn btn-image" onclick="playlist.addTrack()"><i class="fa-solid fa-plus"></i></button>
+                </form>
+                <div id="playlist-tooltip" class="playlist__tooltip"></div>
             </div>
-            <div id="playlist-error" class="playlist__error"></div>
-            <div id="playlist-tooltip" class="playlist__tooltip"></div>
+            <div style="display: none" class="search">
+                <div id="search-results" class="playlist__tracks"></div>
+                <form onsubmit="event.preventDefault()" class="playlist__input">
+                    <input id="search-field" type="text" placeholder="Enter search query"/>
+                    <button id="search-btn" title="Search" class="btn btn-image" onclick="search.search()"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+                <div id="search-tooltip" class="playlist__tooltip"></div>
+            </div>
         </div>
-        <div class="users">
-            <h4>Online users:</h4>
+        <div class="users block">
+            <header class="block__header">
+                <ul class="tabs">
+                    <li class="active">Online users</li>
+                </ul>
+            </header>
             <ul id="users-list" class="users__list">
             </ul>
             <div class="users__buttons">
-                <button title="View permissions" class="btn btn-image" onclick="showModal()"><i class="fa-solid fa-list-check"></i></button>
-                <button title="View banlist" class="btn btn-image hidden" onclick="showBanlistModal()" host-only><i class="fa-solid fa-user-slash"></i></button>
+                <button title="View permissions" class="btn btn-image" onclick="permissions.showPermsModal()"><i class="fa-solid fa-list-check"></i></button>
+                <button title="View banlist" class="btn btn-image hidden" onclick="banlistModal.show()" host-only><i class="fa-solid fa-user-slash"></i></button>
             </div>
         </div>
     </div>
     <!--Youtube-->
     <div id="player" style="display: none; visibility: hidden;"></div>
+    <iframe id="player-sc" style="display: none; visibility: hidden;" width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/730761973&auto_play=true&start_track=0"></iframe>
     <!--Player-->
     <div class="audio-player">
         <div class="timeline">
@@ -97,7 +119,10 @@
     <script src="{% static 'js/users.js' %}"></script>
     <script src="{% static 'js/chat.js' %}"></script>
     <script src="{% static 'js/player.js' %}"></script>
+    <script src="{% static 'js/search.js' %}"></script>
     <script src="{% static 'js/playlist.js' %}"></script>
     <script src="{% static 'js/permissions.js' %}"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="{% static 'js/soundcloudAPI.js' %}"></script>
+    <script src="{% static 'js/soundcloud.js' %}"></script>
 {% endblock scripts %}

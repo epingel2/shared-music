@@ -31,6 +31,7 @@
 
   <body>
     <nav id="collapse-sidebar" class="sidebar">
+        <img class="sidebar__logo responsive-image" src="/static/images/sharedmusic.svg" alt="logo">
         <a
             href="javascript:void(0)"
             class="sidebar__closebtn"
@@ -45,20 +46,21 @@
             <i class="fa-solid fa-arrow-right-to-bracket"></i>
             <p>Log in</p>
         </a>
-        <img class="sidebar__logo responsive-image" src="/static/images/sharedmusic.svg" alt="logo">
-        <div class="sidebar__issues">
-            <p>If you found any bugs please contact us at lomank200222@gmail.com</p>
-            <p>Or create an issue on <a target="_blank" href="https://github.com/Lomank123/shared-music/issues"><i class="fa-brands fa-github"></i></a></p>
+        <div class="sidebar__bottom">
+            {% if user.is_authenticated %}
+            <div class="sidebar__user">
+                <h6>Welcome, {{ user.username }}</h6>
+                <a href="{% url 'logout' %}" class="sidebar__link sidebar__link_logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <p>Logout</p>
+                </a>
+            </div>
+            {% endif %}
+            <div class="sidebar__issues">
+                <p>If you found any bugs please contact us at lomank200222@gmail.com</p>
+                <p>Or create an issue on <a target="_blank" href="https://github.com/Lomank123/shared-music/issues"><i class="fa-brands fa-github"></i></a></p>
+            </div>
         </div>
-        {% if user.is_authenticated %}
-        <div class="sidebar__user">
-            <h6>Welcome, {{ user.username }}</h6>
-            <a href="{% url 'logout' %}" class="sidebar__link sidebar__link_logout">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                <p>Logout</p>
-            </a>
-        </div>
-        {% endif %}
     </nav>
     <button class="sidebar__openbtn" onclick="openNav()">
         <svg
@@ -85,12 +87,11 @@
     </main>
   </body>
 
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
   <script src="{% static 'js/modal.js' %}"></script>
   <script src="{% static 'js/navbar.js' %}"></script>
-  <!-- Optional JavaScript -->
+
   {% block scripts %}
   {% endblock scripts %}
 </html>

@@ -1,71 +1,57 @@
-const chat = $("#chat");
-const chatField = $("#chat-field");
-let flag = false;
+class ChatManager {
+    constructor() {
+        this.chat = $("#chat");
+        this.chatField = $("#chat-field");
+        this.flag = false;
+        this.messages = [];
 
-const options = {
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-};
-
-function muteUser(username) {
-    roomSocket.send(
-        JSON.stringify({
-            event: "MUTE_LISTENER",
-            message: "Mute user.",
-            username: username,
-        })
-    );
-}
-
-function unmuteUser(username) {
-    roomSocket.send(
-        JSON.stringify({
-            event: "UNMUTE_LISTENER",
-            message: "Unmute user.",
-            username: username,
-        })
-    );
-}
-
-function sendMessage() {
-    const text = chatField.val();
-    if (text === "") {
-        return;
+        this.options = {
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        };
     }
-    roomSocket.send(
-        JSON.stringify({
-            event: "SEND_CHAT_MESSAGE",
-            message: "New message incomming.",
-            chat_message: text,
-        })
-    );
-    chatField.val("");
-}
 
-function handleChatMessages(messages, reset = false) {
-    if (reset) {
-        chat.text("");
+    sendMessage() {
+        const text = this.chatField.val();
+        if (text === "") {
+            return;
+        }
+        roomSocket.send(
+            JSON.stringify({
+                event: "SEND_CHAT_MESSAGE",
+                message: "New message incomming.",
+                chat_message: text,
+            })
+        );
+        this.chatField.val("");
     }
-    if (messages.length === 0) {
-        chat.text("No messages :(");
-        flag = true;
-    // I need to remove "no messages :(" when first message arrives
-    // Kinda bad implementation, maybe i should find a better way (someday)
-    } else if (flag) {
-        chat.text("");
-        flag = false;
-    }
-    messages.forEach((newMessage) => {
-        let date = new Date(newMessage.timestamp).toLocaleDateString("en-US", options);
 
-        let message = $(`
+    updateMessages(newMessages) {
+        this.messages = newMessages;
+        this.render();
+        // Scroll to the bottom of the chat block
+        this.chat.scrollTop(this.chat[0].scrollHeight);
+    }
+
+    render() {
+        this.chat.text("");
+        if (this.messages.length === 0) {
+            this.chat.text("No messages :(");
+        }
+        this.messages.forEach((newMessage) => {
+            let date = new Date(newMessage.timestamp).toLocaleDateString("en-US", this.options);
+
+            let message = $(`
         <div class="message">
             <div class="message__sender">${newMessage.username}</div>
             <div class="message__content">${newMessage.message}</div>
             <div class="message__time">${date}</div>
         </div>`);
-        chat.append(message);
-    });
+            this.chat.append(message);
+        });
+    }
 }
+
+const chat = new ChatManager();

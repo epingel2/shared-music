@@ -13,7 +13,7 @@ function connect() {
         roomSocket.send(
             JSON.stringify({
                 event: "CONNECT",
-                message: username,
+                message: users.username,
             })
         );
     };
@@ -37,7 +37,7 @@ function connect() {
                 connect();
             }, 5000);
         }
-        pauseTrack();
+        player.pauseTrack();
     };
 
     roomSocket.onmessage = (e) => {
@@ -46,34 +46,23 @@ function connect() {
         console.log(data);
 
         if (data.event == "CONNECT") {
-            users = data.listeners.users;
-            permissions = data.permissions;
-            setPermissions(permissions);
-            updateUserList(users);
-            handleChatMessages(data.recent_messages, true);
-            if (username === data.user) {
-                updatePlaylist(data.playlist);
+            permissions.updatePerms(data.permissions);
+            users.updateUserList(data.listeners.users);
+            chat.updateMessages(data.recent_messages);
+            if (users.username === data.user) {
+                playlist.updateTracks(data.playlist);
             }
         }
         if (data.event == "SEND_EXTRA_INFO") {
             if (data.mute_list) {
-                muteList = data.mute_list.map(user => user.username);
-                updateUserList(users);
+                users.updateMutelist(data.mute_list.map((user) => user.username));
             }
             if (data.ban_list) {
-                banList = data.ban_list;
-                updateBanlist();
+                users.updateBanlist(data.ban_list);
             }
         }
         if (data.event == "GET_TRACK_FROM_LISTENERS") {
-            let state = player.getPlayerState();
-            const trackData = {
-                name: player.getVideoData().title,
-                duration: player.getDuration(),
-                url: player.getVideoUrl(),
-                currentTime: player.getCurrentTime(),
-                isPaused: state == 2 || state == -1,
-            };
+            const trackData = player.getCurrentTrackData();
             roomSocket.send(
                 JSON.stringify({
                     event: "SEND_TRACK_TO_NEW_USER",
@@ -85,8 +74,7 @@ function connect() {
             );
         }
         if (data.event == "DISCONNECT") {
-            users = data.listeners.users;
-            updateUserList(users);
+            users.updateUserList(data.listeners.users);
         }
         if (data.event == "ALREADY_CONNECTED") {
             roomSocket.close(1000, (reason = "qweqweqweS"));
@@ -94,52 +82,52 @@ function connect() {
         }
         if (data.event == "ADD_TRACK") {
             if (!data.created) {
-                setPlaylistError("Track is already in playlist");
+                playlist.setError("Track is already in playlist");
                 return;
             }
-            updatePlaylist(data.playlist, player.getVideoUrl());
+            playlist.updateTracks(data.playlist);
         }
         if (data.event == "CHANGE_TRACK") {
             const id = youtube_parser(data.track.url);
-            setThumbnail(id);
             player.loadVideoById(id);
-            playTrack();
-            updatePlaylist(data.playlist, data.track.url);
+            player.playTrack();
+            playlist.updateActiveTrackUrl(data.track.url);
             // In case youtube locally changes starting time (especially on long videos)
-            player.seekTo(0);
+            //player.seekTo(0);
         }
         if (data.event == "SET_CURRENT_TRACK") {
             const id = youtube_parser(data.track.url);
-            setThumbnail(id);
             player.loadVideoById(id, data.track.currentTime);
-            playTrack();
+            player.playTrack();
             if (data.track.isPaused) {
                 setTimeout(() => {
-                    pauseTrack();
+                    player.pauseTrack();
                 }, 500);
             }
-            updatePlaylist(data.playlist, data.track.url);
+            playlist.updateActiveTrackUrl(data.track.url);
             if (data.loop) {
                 $(".repeat-btn").children().toggleClass("repeat-active");
                 loop = data.loop;
             }
-            hasVoted = false;
         }
         if (data.event == "DELETE_TRACK") {
-            updatePlaylist(data.playlist, data.chosenTrackUrl);
-            if (player.getVideoData().title == data.deletedTrackInfo.name) {
+            playlist.updateTracks(data.playlist);
+            let currentTrackId = youtube_parser(player.getCurrentTrackData().url);
+            let deletedTrackId = youtube_parser(data.deletedTrackInfo.url);
+            if (currentTrackId && currentTrackId == deletedTrackId) {
                 player.stopVideo();
                 player.loadVideoById("");
-                progressBar.style.width = 0;
-                thumb.hidden = true;
-                thumb.src = "";
+                playlist.updateActiveTrackUrl("");
+                progressBar.width(0);
+                thumb.attr("src", "");
+                thumb.attr("hidden", true);
             }
         }
         if (data.event == "PLAY") {
-            playTrack();
+            player.playTrack();
         }
         if (data.event == "PAUSE") {
-            pauseTrack();
+            player.pauseTrack();
         }
         if (data.event == "CHANGE_TIME") {
             player.seekTo(data.time);
@@ -151,35 +139,33 @@ function connect() {
         if (data.event == "HOST_CHANGED") {
             $("#host").attr("host_username", data.new_host);
             hostUsername = $("#host").attr("host_username");
-            $("#muted-message").addClass("hidden");
-            updateUserList(users);
-            setPermissions(permissions);
+            users.updateHost();
+            permissions.render();
         }
         if (data.event == "CHANGE_PERMISSIONS") {
-            permissions = data.permissions;
-            setPermissions(permissions);
+            permissions.updatePerms(data.permissions);
             toastr["info"]("Room permissions have been changed");
         }
         if (data.event == "ROOM_NOT_ALLOWED") {
             toastr["error"]("Insufficient permissions");
         }
         if (data.event == "SEND_CHAT_MESSAGE") {
-            console.log(data.chat_message);
-            handleChatMessages([data.chat_message]);
+            chat.updateMessages([...chat.messages, data.chat_message]);
         }
         if (data.event == "BAN_USER") {
             console.log("You have been banned.");
-            handleUserBan();
+            users.handleUserBan();
             roomSocket.close();
         }
         if (data.event == "MUTE_LISTENER") {
             $("#muted-message").removeClass("hidden");
+            toastr["warning"]("You have been muted");
         }
         if (data.event == "UNMUTE_LISTENER") {
-            $("#muted-message").addClass("hidden");
+            toastr["info"]("You are no longer muted");
         }
         if (data.event == "LISTENER_MUTED") {
-            $("#muted-message").removeClass("hidden");
+            toastr["error"]("You are muted");
         }
     };
 

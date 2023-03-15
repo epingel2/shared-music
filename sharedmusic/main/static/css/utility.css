@@ -4,6 +4,7 @@
     --primary-color: rgb(173, 33, 33);
     --primary-color-hover: rgb(109, 20, 20);
     --block-bg-color: rgb(43, 47, 58);
+    --block-bg-light-color: rgb(50, 55, 71);
     /* Scrollbar variables */
     --scrollbarBG: rgba(255, 255, 255, 0.8);
     --scrollbarThumb: rgb(173, 33, 33);
@@ -33,11 +34,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: white;
-    font-size: 1.2rem;
-    font-weight: 300;
-    line-height: 1.6;
-    font-family: "open sans", sans-serif;
 }
 
 ul {
@@ -46,6 +42,14 @@ ul {
 
 body {
     background-color: var(--main-bg-color);
+}
+
+body * {
+    font-size: 1.4rem;
+    font-weight: 300;
+    line-height: 1.6;
+    font-family: "open sans", sans-serif;
+    color: white;
 }
 
 input[type="text"],
@@ -59,7 +63,7 @@ input[type="email"] {
 
 .responsive-image {
     width: 100%;
-    max-width: 700px;
+    max-width: 600px;
     height: auto;
 }
 
@@ -67,13 +71,16 @@ input[type="email"] {
     background-color: var(--primary-color);
     border: 1px solid var(--primary-color);
     cursor: pointer;
-    padding: 5px;
+    padding: 0.3rem;
     border-radius: 10px;
 }
 
 .btn-image {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn:hover {
@@ -81,9 +88,18 @@ input[type="email"] {
     border: 1px solid var(--primary-color-hover);
 }
 
+.content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-bottom: 100px;
+}
+
 .container {
-    max-width: 1400px;
+    max-width: 1500px;
     margin: 0 auto;
+    padding-left: 50px;
+    padding-right: 50px;
 }
 
 .hidden {
@@ -123,22 +139,6 @@ input[type="email"] {
     width: 400px;
 }
 
-.chat__input,
-.playlist__input,
-.users__buttons {
-    border-top: 4px solid var(--primary-color);
-    padding-top: 20px;
-}
-
-.chat,
-.playlist,
-.users {
-    background-color: var(--block-bg-color);
-    padding: 20px;
-    border-radius: 10px;
-}
-
-.playlist__input input, .chat__input input {
-    min-width: 0;
-    width: 1px;
+.fa-magnifying-glass {
+    font-size: 1.2rem;
 }

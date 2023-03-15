@@ -1,7 +1,8 @@
 .users__list {
-    height: 50vh;
+    flex: 1 1 auto;
     overflow-y: auto;
     margin-top: 5px;
+    height: 0; /* height is needed for scroll to work */
 }
 
 .users__list li {
@@ -12,7 +13,6 @@
 
 .users__list li .username {
     margin-right: 10px;
-    max-width: 15vw;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -40,13 +40,14 @@
 
 .users__buttons {
     margin-top: 20px;
-    text-align: center;
     display: flex;
+    align-items: center;
     gap: 10px;
 }
 
 .users__buttons .btn {
     flex-grow: 1;
+    padding: 12px 0;
 }
 
 .permissions {
@@ -77,7 +78,6 @@
 .banned-user {
     display: flex;
     gap: 10px;
-    align-items: center;
     justify-content: space-between;
 }
 
@@ -98,7 +98,7 @@
     display: inline-block;
 }
 
-/* Dropdown Content (Hidden by Default) */
+/* Dropdown Content (hidden by default) */
 .dropdown-content {
     display: none;
     position: absolute;
