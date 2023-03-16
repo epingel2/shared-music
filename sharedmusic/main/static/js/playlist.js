@@ -4,7 +4,7 @@ class PlaylistManager {
         this.playlistTooltip = $("#playlist-tooltip");
         this.playlist = $("#playlist");
         this.playlistError = $("#playlist-error");
-        this.playlistContent = [];
+        this.playlistContent = []; // [{name: string, url: string}]
         this.activeTrackUrl = "";
     }
 
@@ -38,7 +38,7 @@ class PlaylistManager {
         this.activeTrackUrl = url;
         this.render();
     }
-
+    // TODO: some visual glitches are left
     render() {
         this.clear();
         search.render();

@@ -35,13 +35,13 @@ class PermissionsManager {
             }
             let perm = setting.attr("data");
             let newValue = setting.find('input[type="radio"]:checked').val();
-            permissions[perm] = newValue;
+            this.permissions[perm] = newValue;
         });
         roomSocket.send(
             JSON.stringify({
                 event: "CHANGE_PERMISSIONS",
                 message: "Room permissions changed",
-                permissions: permissions,
+                permissions: this.permissions,
             })
         );
         permsModalHost.hide();
@@ -53,6 +53,7 @@ class PermissionsManager {
     }
 
     render() {
+        console.log(this.permissions);
         let dict = {
             PAUSE: "Pause track",
             ADD_TRACK: "Add track",

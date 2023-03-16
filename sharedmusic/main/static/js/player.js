@@ -83,7 +83,7 @@ class YoutubePlayer {
         });
 
         //click (or hold) volume slider to change volume
-        volumeSlider.change((e) => {
+        volumeSlider.on("input", () => {
             renderVolumeSlider();
             let newVolume = volumeSlider.val();
             this.ytPlayer.setVolume(newVolume);
