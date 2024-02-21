@@ -9,7 +9,7 @@
 - Construct WebSocket-based application
 - Gain team work experience
 
-Live version can be visited at: [sharedmusic.live](https://sharedmusic.live/)
+Live version can be visited at: [sharedmusic.me](https://sharedmusic.me/)
 
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
