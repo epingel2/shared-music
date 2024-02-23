@@ -35,12 +35,12 @@ class RoomRepository():
 
     @staticmethod
     @database_sync_to_async
-    def add_listener(room_id, user_id):
+    def add_listener(room_id, user):
         """
         Attaches user to room as listener.
         """
         room = Room.objects.get(id=room_id)
-        room.listeners.add(user_id)
+        room.listeners.add(user)
 
     @staticmethod
     @database_sync_to_async
@@ -60,7 +60,9 @@ class RoomRepository():
         listeners = (
             Room.objects.filter(id=room_id)
             .annotate(username=F("listeners__username"))
-            .values("username")
+            .annotate(name=F("listeners__first_name"))
+            .annotate(isGuest = F("listeners__is_guest"))
+            .values("username", "name", "isGuest")
         )
         data = {
             'count': listeners.count(),
