@@ -56,7 +56,11 @@ class MusicRoomConsumerService:
         room = await RoomRepository.get_room_by_id(self.room_id)
         if event in room.permissions.keys():
             if int(room.permissions[event]) > consts.ROOM_ALLOW_ANY:
-                return self.user.id == room.host_id
+                
+                if int(room.permissions[event]) > consts.ROOM_ALLOW_REGISTERED:
+                    return self.user.id == room.host_id
+                
+                return not self.user.is_guest
         return True
 
     async def _is_user_muted(self):
@@ -183,7 +187,7 @@ class MusicRoomConsumerService:
             for group_name in [self.room_group_name, self.user_group_name]:
                 await self.channel_layer.group_add(group_name, self.channel_name)
             # Add new listener
-            await RoomRepository.add_listener(self.room_id, self.user.id)
+            await RoomRepository.add_listener(self.room_id, self.user)
 
     async def disconnect_user(self):
         """

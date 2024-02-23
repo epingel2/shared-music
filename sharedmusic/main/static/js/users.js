@@ -77,10 +77,11 @@ class UserManager {
         $("#room-title").text(`${this.hostUsername}'s room`);
         $("#users-list").text("");
         this.usersList.forEach((user) => {
+            const displayName = user.isGuest ? user.name : user.username;
             let node = $(
                 `<li>` +
                     `<div class="online"></div>` +
-                    `<div class="username">${user.username}</div>` +
+                    `<div class="username">${displayName}</div>` +
                     `</li>`
             );
             if (user.username != this.hostUsername && this.username == this.hostUsername) {

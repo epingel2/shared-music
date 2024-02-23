@@ -14,6 +14,7 @@ username_validator = UnicodeUsernameValidator()
 
 
 class CustomUser(AbstractUser):
+    is_guest = models.BooleanField(default=False)
 
     username = models.CharField(
         _('username'),
@@ -26,9 +27,26 @@ class CustomUser(AbstractUser):
         },
     )
 
-    def __str__(self):
-        return self.username
+    # Use same validators for 'first_name' field as 'username'
+    first_name = models.CharField(
+        _('Guest Name'),
+        max_length=20,
+        blank=True,
+        validators=[username_validator],
+        help_text=_('Required. 20 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+    )
 
+    def clean(self):
+        # If user is a guest, ensure valid first_name is provided
+        if self.is_guest:
+            self.username_validator(self.first_name)
+        super().clean()
+
+    def __str__(self):
+        if self.is_guest:
+            return self.first_name
+        else:
+            return self.username
 
 class Soundtrack(models.Model):
     name = models.CharField(default="Soundtrack", max_length=120, verbose_name="Name")
@@ -57,11 +75,11 @@ class Playlist(models.Model):
 
 def permissions_jsonfield_default():
     return dict([
-            (consts.CHANGE_TRACK_EVENT, consts.ROOM_ALLOW_ANY),
-            (consts.CHANGE_TIME_EVENT, consts.ROOM_ALLOW_ANY),
-            (consts.ADD_TRACK_EVENT, consts.ROOM_ALLOW_ANY),
-            (consts.DELETE_TRACK_EVENT, consts.ROOM_ALLOW_ANY),
-            (consts.PAUSE_TRACK_EVENT, consts.ROOM_ALLOW_ANY),
+            (consts.CHANGE_TRACK_EVENT, consts.ROOM_ALLOW_REGISTERED),
+            (consts.CHANGE_TIME_EVENT, consts.ROOM_ALLOW_REGISTERED),
+            (consts.ADD_TRACK_EVENT, consts.ROOM_ALLOW_REGISTERED),
+            (consts.DELETE_TRACK_EVENT, consts.ROOM_ALLOW_REGISTERED),
+            (consts.PAUSE_TRACK_EVENT, consts.ROOM_ALLOW_REGISTERED),
         ])
 
 

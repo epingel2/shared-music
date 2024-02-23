@@ -6,7 +6,7 @@ from django.shortcuts import reverse
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
 
-from main.forms import CustomUserCreationForm, RoomCreationForm
+from main.forms import CustomUserCreationForm, CustomUserGuestCreationForm, RoomCreationForm
 from main.models import Room, RoomPlaylist
 
 
@@ -14,10 +14,10 @@ class HomeView(CreateView):
     form_class = RoomCreationForm
     model = Room
     template_name = 'home.html'
-    login_url = '/signup/'
+    login_url = '/login/guest/'
 
     def post(self, request):
-        if request.user.is_authenticated:
+        if request.user.is_authenticated and not request.user.is_guest:
             return super().post(request)
         else:
             return HttpResponseRedirect(reverse('signup'))
@@ -35,7 +35,7 @@ class HomeView(CreateView):
 
 class RoomView(LoginRequiredMixin, TemplateView):
     template_name = 'room.html'
-    login_url = '/signup/'
+    login_url = '/login/guest/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -65,4 +65,19 @@ class CustomUserSignUpView(CreateView):
         username = form.cleaned_data.get('username')
         user = authenticate(username=username, password=raw_password)
         login(self.request, user)
+        return valid
+    
+class CustomUserGuestSignUpView(CreateView):
+    model = get_user_model()
+    form_class = CustomUserGuestCreationForm
+    template_name = 'auth/signup.html'
+    success_url = '/'
+
+    def form_valid(self, form):
+        valid = super(CustomUserGuestSignUpView, self).form_valid(form)
+        # Since guest user passwords are auto-generated and not user-provided,
+        # directly login the user if needed.
+        user = form.instance  # The user instance, saved by the form
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        login(self.request, user) 
         return valid
