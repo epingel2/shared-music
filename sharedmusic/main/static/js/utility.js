@@ -114,31 +114,37 @@ const permsModalHost = $modal({
     content: `<div class="perms-menu"><div class="grid-wrapper" data="title">
         <div class="perms-menu__name">Permissions</div>
         <div class="perms-menu__option">Any user</div>
+        <div class="perms-menu__option">Registered</div>
         <div class="perms-menu__option">Host only</div>
     </div>
     <div class="grid-wrapper" data="PAUSE">
         <div class="perms-menu__name">Pause track</div>
         <input type="radio" name="pause" value="1" class="perms-menu__option" />
+        <input type="radio" name="pause" value="2" class="perms-menu__option" />
         <input type="radio" name="pause" value="5" class="perms-menu__option" />
     </div>
     <div class="grid-wrapper" data="ADD_TRACK">
         <div class="perms-menu__name">Add track</div>
         <input type="radio" name="add" value="1" class="perms-menu__option" />
+        <input type="radio" name="add" value="2" class="perms-menu__option" />
         <input type="radio" name="add" value="5" class="perms-menu__option" />
     </div>
     <div class="grid-wrapper" data="CHANGE_TIME">
         <div class="perms-menu__name">Change time</div>
         <input type="radio" name="change_time" value="1" class="perms-menu__option" />
+        <input type="radio" name="change_time" value="2" class="perms-menu__option" />
         <input type="radio" name="change_time" value="5" class="perms-menu__option" />
     </div>
     <div class="grid-wrapper" data="CHANGE_TRACK">
         <div class="perms-menu__name">Change track</div>
         <input type="radio" name="change_track" value="1" class="perms-menu__option" />
+        <input type="radio" name="change_track" value="2" class="perms-menu__option" />
         <input type="radio" name="change_track" value="5" class="perms-menu__option" />
     </div>
     <div class="grid-wrapper" data="DELETE_TRACK">
         <div class="perms-menu__name">Delete track</div>
         <input type="radio" name="delete" value="1" class="perms-menu__option" />
+        <input type="radio" name="delete" value="2" class="perms-menu__option" />
         <input type="radio" name="delete" value="5" class="perms-menu__option" />
     </div>
 </div>`,
